@@ -1,20 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"math"
 	"net/http"
+	"os"
+	"trial/working/handlers"
 )
 
 func main() {
-	fmt.Println(math.Abs(2.4 / 1.2))
-
-	//router := mux.BuildVarsFunc()
-
-	http.HandleFunc("/", func(responseWriter http.ResponseWriter, request *http.Request) {
-		log.Println("Hello World")
-	})
-	http.ListenAndServe(":9090", nil)
+	logger := log.New(os.Stdout, "product-api", log.LstdFlags)
+	helloHandler := handlers.NewHello(logger)
+	goodbyeHandler := handlers.NewGoodbye(logger)
+	serveMux := http.NewServeMux()
+	serveMux.Handle("/hello", helloHandler)
+	serveMux.Handle("/goodbye", goodbyeHandler)
+	//http.HandleFunc("/hello", helloHandler)
+	err := http.ListenAndServe(":9090", serveMux)
+	if err != nil {
+		return
+	}
 
 }
